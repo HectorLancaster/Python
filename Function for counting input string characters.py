@@ -3,7 +3,7 @@ def counter(sentence):
 
     Parameters
     ----------
-    *text : input a string " "
+    sentence : input a string " "
 
     Returns
     -------
@@ -15,7 +15,6 @@ def counter(sentence):
     alphabet = string.ascii_letters
     value = 0
     count_letters = dict()
-    #sentence = str(text)
     for letters in alphabet:
         if letters in sentence:
             for i in range(len(sentence)):
