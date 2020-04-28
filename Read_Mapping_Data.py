@@ -1,3 +1,6 @@
+import time
+
+start_time = time.process_time()
 
 #----------------------------Import Data--------------------------------------
 with open("\\Users\\Hector\\Desktop\\Data\\KC10 map.txt", "r") as KC10:
@@ -60,3 +63,7 @@ for a in range(0,105,5):
             if x_yp50[i] == a and y_yp50[i] == b:
                 data.append((wavenumber_yp50[i], intensity_yp50[i]))
         spectra_yp50[a,b] = data
+        
+end_time = time.process_time()
+print("Script runtime:", str(end_time - start_time), "s")
+# last runtime = 47.8s

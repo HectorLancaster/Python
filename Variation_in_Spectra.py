@@ -41,6 +41,7 @@ plt.plot([column[0] for column in KC10_avspectra],
          "k-", linewidth=2, label = "KC10 Average")
 
 plt.yticks([],[])
+#plt.xticks(np.arange(1200,1700,step = 150))
 plt.tick_params(axis='x', direction='in')
 
 plt.legend(loc="upper left", fontsize="x-small", markerfirst=True,
@@ -62,6 +63,7 @@ plt.plot([column[0] for column in LiC10_avspectra],
          "k-", linewidth=2, label = "LiC10 Average")
 
 plt.yticks([],[])
+#plt.xticks(np.arange(1200,1700, step = 1500))
 plt.tick_params(axis='x', direction='in')
 
 plt.legend(loc="upper left", fontsize="x-small", markerfirst=True,
@@ -87,6 +89,7 @@ plt.xlabel("Raman shift (cm⁻¹)")
 plt.ylabel("Intensity (arb. units)")
 
 plt.yticks([],[])
+#plt.xticks(np.arange(1200,1700, step = 1500))
 plt.tick_params(axis='x', direction='in')
 
 plt.legend(loc="upper left", fontsize="x-small", markerfirst=True,
