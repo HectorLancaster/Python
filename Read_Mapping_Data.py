@@ -66,4 +66,4 @@ for a in range(0,105,5):
         
 end_time = time.process_time()
 print("Script runtime:", str(end_time - start_time), "s")
-# last runtime = 47.8s
+# last runtime = 50s
