@@ -1,72 +1,66 @@
+#-----------------------------General Instructions----------------------------
+
+# Filenames must be named as "x map.txt" where x is the material name.
+# The filepath is C:\\Users\\Hector\\Desktop\\Data\\Map_Data\\ so this must
+# be changed if the file is in a different location.
+
+# This code produces a library of spectra with the keys being the materials'
+# names, and within those keys a second key being the xy position. e.g. to 
+# access KC10 spectra x=0,y=-100 then type: sliced_data["KC10"][(0,-100)]
+
+
+#---------------------------------User Inputs---------------------------------
+
+# step size in data in x (column 1) and y (column 2):
+xstep = 5
+ystep = 5
+
+
+#-------------------------------Import Modules--------------------------------
+
+import numpy as np
 import time
-
-start_time = time.process_time()
-
-#----------------------------Import Data--------------------------------------
-
-with open("\\Users\\Hector\\Desktop\\Data\\KC10 map.txt", "r") as KC10:
-              KC10_raw = KC10.readlines()
-with open("\\Users\\Hector\\Desktop\\Data\\LiC10 map.txt", "r") as LiC10:
-              LiC10_raw = LiC10.readlines()
-with open("\\Users\\Hector\\Desktop\\Data\\yp50 map.txt", "r") as yp50:
-              yp50_raw = yp50.readlines()
+import glob
 
 
-#-----------------------------Sort Data---------------------------------------
+#--------------------------------Import Data----------------------------------
 
-spectrum = [line.split() for line in KC10_raw]
-length = len(spectrum) 
-x_KC10 = [int(spectrum[i][0]) for i in range(length)]
-y_KC10 = [int(spectrum[i][1]) for i in range(length)]
-wavenumber_KC10 = [float(spectrum[i][2]) for i in range(length)]
-intensity_KC10 = [float(spectrum[i][3]) for i in range(length)]
+# Start process timer
+start_time = time.process_time() 
 
-data_points = x_KC10.count(0)
-spectra_KC10 = dict()
-for a in range(0,105,5):            
-    for b in range(-100,5,5):
-        data = list()
-        for i in range(length):
-            if x_KC10[i] == a and y_KC10[i] == b:
-                data.append((wavenumber_KC10[i], intensity_KC10[i]))
-        spectra_KC10[a,b] = data
+# Create a list of all files in filepath that have the form *.txt
+filenames = sorted(glob.glob("C:\\Users\\Hector\\Desktop\\Data\\Map_Data\\*.txt"))
 
+# Extract the material names from the filepath name
+material = list()
+for i in range(len(filenames)):
+    material.append(filenames[i][38:-8]) # Corresponds to position of name
 
-spectrum = [line.split() for line in LiC10_raw]
-length = len(spectrum) 
-x_LiC10 = [int(spectrum[i][0]) for i in range(length)]
-y_LiC10 = [int(spectrum[i][1]) for i in range(length)]
-wavenumber_LiC10 = [float(spectrum[i][2]) for i in range(length)]
-intensity_LiC10 = [float(spectrum[i][3]) for i in range(length)]
+# This numpy method loads the text in as an array   
+raw_data = dict()
+for i in range(len(filenames)):
+        raw_data[material[i]] = np.loadtxt(filenames[i])
 
-data_points = x_LiC10.count(0)
-spectra_LiC10 = dict()
-for a in range(0,105,5):            
-    for b in range(-100,5,5):
-        data = list()
-        for i in range(length):
-            if x_LiC10[i] == a and y_LiC10[i] == b:
-                data.append((wavenumber_LiC10[i], intensity_LiC10[i]))
-        spectra_LiC10[a,b] = data
+# Slice data into individual spectra
+sliced_data = dict()
+for i in material:
+    xmin = int(min(raw_data[i][:,0]))
+    xmax = int(max(raw_data[i][:,0]) + astep)
+    ymin = int(min(raw_data[i][:,1]))
+    ymax = int(max(raw_data[i][:,1]) + bstep)
+    spectra = dict()
+    for x in range(xmin, xmax, xstep):
+        for y in range(ymin, ymax, ystep):
+            posx = np.where(raw_data[i][:,0] == a) # coords when true
+            posy = np.where(raw_data[i][:,1] == b) # coords when true
+            inter = np.intersect1d(posx,posy) # intersection of posx & posy
+            spectra[a,b] = raw_data[i][inter] # assign each spectrum to dict
+    sliced_data[i] = spectra # for each material, embed spectra dict in dict
 
-    
-spectrum = [line.split() for line in yp50_raw]
-length = len(spectrum) 
-x_yp50 = [int(spectrum[i][0]) for i in range(length)]
-y_yp50 = [int(spectrum[i][1]) for i in range(length)]
-wavenumber_yp50 = [float(spectrum[i][2]) for i in range(length)]
-intensity_yp50 = [float(spectrum[i][3]) for i in range(length)]
-        
-data_points = x_yp50.count(0)
-spectra_yp50 = dict()
-for a in range(0,105,5):            
-    for b in range(-100,5,5):
-        data = list()
-        for i in range(length):
-            if x_yp50[i] == a and y_yp50[i] == b:
-                data.append((wavenumber_yp50[i], intensity_yp50[i]))
-        spectra_yp50[a,b] = data
-        
+# End process timer
 end_time = time.process_time()
 print("Script runtime:", str(end_time - start_time), "s")
-# last runtime = 50s
+
+# last runtime = 8.7s
+
+#---------------------------------Script End----------------------------------
