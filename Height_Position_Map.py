@@ -11,6 +11,8 @@ Created on Mon Apr 27 10:20:06 2020
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.figure() 
+
 #max_loc = np.zeros((21,21))
 #for a in range(0,105,5):
     #for b in range(-100,5,5):
@@ -20,9 +22,25 @@ import numpy as np
         #max_loc[a//5,(b-5)//5] = max_loc_val
 
 # Produces a 2D image from the input array, sets the aspect ratio to 'equal'
-plt.imshow(max_loc, aspect='equal', cmap='Reds', interpolation='none')
+plt.subplot(223)
+plt.imshow(max_loc_yp50, aspect='equal', cmap='Reds', interpolation='none')
 plt.colorbar()
 plt.yticks(np.arange(0,21, step=5))
 plt.xticks(np.arange(0,21, step=5))
+plt.title("yp50")
 
-plt.savefig("height position map.pdf")
+plt.subplot(221)
+plt.imshow(max_loc_KC10, aspect='equal', cmap='Reds', interpolation='none')
+#plt.colorbar()
+plt.yticks([],[])
+plt.xticks([],[])
+plt.title("KC10")
+
+plt.subplot(222)
+plt.imshow(max_loc_LiC10, aspect='equal', cmap='Reds', interpolation='none')
+#plt.colorbar()
+plt.yticks([],[])
+plt.xticks([],[])
+plt.title("LiC10")
+
+plt.savefig("C:\\Users\\Hector\\Desktop\\Data\\height position map.pdf")
