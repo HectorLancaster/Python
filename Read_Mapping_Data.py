@@ -45,16 +45,16 @@ for i in range(len(filenames)):
 sliced_data = dict()
 for i in material:
     xmin = int(min(raw_data[i][:,0]))
-    xmax = int(max(raw_data[i][:,0]) + astep)
+    xmax = int(max(raw_data[i][:,0]) + xstep)
     ymin = int(min(raw_data[i][:,1]))
-    ymax = int(max(raw_data[i][:,1]) + bstep)
+    ymax = int(max(raw_data[i][:,1]) + ystep)
     spectra = dict()
     for x in range(xmin, xmax, xstep):
         for y in range(ymin, ymax, ystep):
-            posx = np.where(raw_data[i][:,0] == a) # coords when true
-            posy = np.where(raw_data[i][:,1] == b) # coords when true
+            posx = np.where(raw_data[i][:,0] == x) # coords when true
+            posy = np.where(raw_data[i][:,1] == y) # coords when true
             inter = np.intersect1d(posx,posy) # intersection of posx & posy
-            spectra[a,b] = raw_data[i][inter] # assign each spectrum to dict
+            spectra[x,y] = raw_data[i][inter] # assign each spectrum to dict
     sliced_data[i] = spectra # for each material, embed spectra dict in dict
 
 # End process timer
