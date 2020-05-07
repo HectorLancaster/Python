@@ -6,11 +6,12 @@ spectrum = [line.split() for line in test]
 wavenumber = [float(spectrum[i][0]) for i in range(len(spectrum))]
 intensity = [float(spectrum[i][1]) for i in range(len(spectrum))]
 
+norm_intensity = [intensity[i]/max(intensity) for i in range(len(intensity))]
 
 import matplotlib.pyplot as plt
 
 # Plot data, label="First" gives a label to the dataset in the plot
-plt.plot(wavenumber, intensity)
+plt.plot(wavenumber, norm_intensity)
 
 #plt.xticks([],[])
 #plt.yticks([],[])
@@ -28,4 +29,4 @@ plt.ylabel("Intensity")
 
 # This is the name of the file, save location and file type,
 # the directory can be input here, remember \\ escape sequence
-# plt.savefig("test2.pdf")
+plt.savefig("glass slide.pdf")
