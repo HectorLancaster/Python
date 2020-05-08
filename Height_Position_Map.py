@@ -1,46 +1,51 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Apr 27 10:20:06 2020
+#--------------------------------file notes-----------------------------------
 
-@author: Hector
-"""
+# Creates a combined plot containing all map g peak postition wrt their xy 
+# coordinates for each material.
 
-# no way here of removing outliers, very important this is done otherwise
-# the x coord coresponding to the max y could represent the x coord of the 
-# outlier
+# To do:
+#       add scale bar of 20 microns
+#       work out how to scale the RHS plot to be equal to the others
+#       work out how to scale teh size of the colorbar
+
+
+#--------------------------------user inputs----------------------------------
+
+# Interpolation: choose either "lanczos" or "none"
+inter = "lanczos"
+
+#------------------------------import modules---------------------------------
+
 import matplotlib.pyplot as plt
-import numpy as np
 
+#----------------------------start process timer------------------------------
+
+start_time = time.process_time()
+
+
+#---------------------------------plot data-----------------------------------
+
+counter = 0
 plt.figure() 
+for i in material:
+    counter += 1
+    plt.subplot(int("13" + str(counter)))
+    plt.imshow(max_loc[i], aspect='equal', cmap='afmhot', interpolation=inter)
+    plt.yticks([],[])
+    plt.xticks([],[])
+    plt.title(i, loc = "left")
+    
+plt.colorbar(fraction = 0.05)
 
-#max_loc = np.zeros((21,21))
-#for a in range(0,105,5):
-    #for b in range(-100,5,5):
-        #array_temp = np.array(spectra_KC10[a,b])
-        #array_spectra = array_temp[:int(array_temp.shape[0]/2)]
-        #max_loc_val = array_spectra[array_spectra.argmax(axis = 0)[1]][0]
-        #max_loc[a//5,(b-5)//5] = max_loc_val
+plt.savefig("C:\\Users\\Hector\\Desktop\\Data\\Figures\\height position map.pdf")
 
-# Produces a 2D image from the input array, sets the aspect ratio to 'equal'
-plt.subplot(223)
-plt.imshow(max_loc_yp50, aspect='equal', cmap='Reds', interpolation='none')
-plt.colorbar()
-plt.yticks(np.arange(0,21, step=5))
-plt.xticks(np.arange(0,21, step=5))
-plt.title("yp50")
 
-plt.subplot(221)
-plt.imshow(max_loc_KC10, aspect='equal', cmap='Reds', interpolation='none')
-#plt.colorbar()
-plt.yticks([],[])
-plt.xticks([],[])
-plt.title("KC10")
+#-----------------------------end process timer-------------------------------
 
-plt.subplot(222)
-plt.imshow(max_loc_LiC10, aspect='equal', cmap='Reds', interpolation='none')
-#plt.colorbar()
-plt.yticks([],[])
-plt.xticks([],[])
-plt.title("LiC10")
+# End process timer
+end_time = time.process_time()
+print("\nScript runtime: %.2f \bs" % (end_time - start_time))
 
-plt.savefig("C:\\Users\\Hector\\Desktop\\Data\\height position map.pdf")
+# last runtime = 0.14s
+
+#---------------------------------script end----------------------------------
