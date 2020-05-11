@@ -32,7 +32,8 @@ import glob
 start_time = time.process_time() 
 
 # Create a list of all files in filepath that have the form *.txt
-filenames = sorted(glob.glob("C:\\Users\\Hector\\Desktop\\Data\\Map_Data\\*.txt"))
+filenames = sorted(glob.glob("C:\\Users\\Hector\\Desktop\\Data\\Map_Data\\*.txt"),
+                   reverse = True)
 
 # Extract the material names from the filepath name
 material = list()

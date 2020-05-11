@@ -76,13 +76,13 @@ for i in material:
     # differntiate between fit and histogram for each material
     counter += 1
     if counter == 1:
-        line = "--"
+        line = "-."
         hcolour = "gold"
     elif counter == 2:
         line = ":"
         hcolour = "darkorange"
     elif counter == 3:
-        line = "-."
+        line = "--"
         hcolour = "dodgerblue"
     # -----
     histogram[i] = plt.hist(max_loc_linear[i], bins=nbins, \
