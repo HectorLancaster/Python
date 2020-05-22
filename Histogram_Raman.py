@@ -6,7 +6,7 @@
 #--------------------------------user inputs----------------------------------
 
 # Set the number of bins for the histograms.
-nbins = 20
+nbins = 10
 
 #------------------------------import modules---------------------------------
 
@@ -77,13 +77,13 @@ for i in material:
     counter += 1
     if counter == 1:
         line = "-."
-        hcolour = "gold"
+        hcolour = "dodgerblue"
     elif counter == 2:
         line = ":"
-        hcolour = "darkorange"
+        hcolour = "gold"
     elif counter == 3:
         line = "--"
-        hcolour = "dodgerblue"
+        hcolour = "darkorange"
     # -----
     histogram[i] = plt.hist(max_loc_linear[i], bins=nbins, \
                         density=True, alpha=0.6, color=hcolour)
@@ -94,7 +94,8 @@ for i in material:
     plt.tick_params(axis ='both', direction ='in', which = "both")
     plt.minorticks_on()
 
-plt.savefig("C:\\Users\\Hector\\Desktop\\Data\\Figures\\height histogram.pdf")
+fig.tight_layout()
+fig.savefig("C:\\Users\\Hector\\Desktop\\Data\\Figures\\height histogram.pdf")
 
 
 #---------------------------------print data----------------------------------
@@ -152,6 +153,6 @@ for i in material:
 # End process timer
 end_time = time.process_time()
 print("\nScript runtime: %.2f \bs" % (end_time - start_time))
-# last runtime = 0.64s
+# last runtime = 0.42s
 
 #---------------------------------script end----------------------------------

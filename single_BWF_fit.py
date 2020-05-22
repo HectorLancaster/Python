@@ -24,25 +24,27 @@ start_time = time.process_time()
 
 x = norm_data["KC10"][0,-100][:,2]
 y = av_data["KC10"]
-y_line = y - y[575]
-x_array = x[288:]
-y_array_gauss = y_line[288:]
+y_line = y - y[0]
+x = x[:288]
+y = y_line[:288]
 
-plt.plot(x_array,y_array_gauss, "bo", markersize = 1)
+plt.plot(x, y, "bo", markersize = 1)
 
 
 #-----------------------------define functions--------------------------------
 
-def _1gaussian(x, amp1,cen1,sigma1):
-    return amp1*(1/(sigma1*(np.sqrt(2*np.pi))))*(np.exp((-1.0/2.0)*(((x_array-cen1)/sigma1)**2)))
 
+def BWF(x, I0G, gammaG, cenG, q):
+    numerator = (1+(x-cenG)/(q*gammaG))**2
+    denominator = 1+((x-cenG)/(gammaG))**2
+    return I0G*(numerator/denominator)
 
 #-----------------------------initial guesses---------------------------------
 
-amp1 = max(y_array_gauss)
-cen1 = x_array[y_array_gauss.argmax(axis=0)]
-#sigma1 = np.std(y_array_gauss, ddof=1) # ddof=1 mean N-1 on denominator i.e. sample
-sigma1 = 40
+I0G = max(y)
+cenG = x[y.argmax(axis=0)]
+gammaG = 40
+q = -5
 
 
 #----------------------------find guassian fit--------------------------------
@@ -61,30 +63,40 @@ sigma1 = 40
 #   pcov: the estimated covarience of popt. The diagonals provide the variance
 #         of the parameter estimate.
 
-popt_gauss, pcov_gauss = scipy.optimize.curve_fit(_1gaussian, x_array, 
-                                                  y_array_gauss,
-                                                  p0=[amp1, cen1, sigma1])
+popt, pcov = scipy.optimize.curve_fit(BWF, x, y, p0=[I0G, gammaG, cenG, q],
+                                                  bounds = (-np.inf,np.inf))
+                                                  
 
 # this calculates the one standard deviation errors of the parameters
-perr_gauss = np.sqrt(np.diag(pcov_gauss))
+perr = np.sqrt(np.diag(pcov))
 
 
-print("amplitude = %0.2f (+/-) %0.2f" % (popt_gauss[0], perr_gauss[0]))
-print("center = %0.2f (+/-) %0.2f" % (popt_gauss[1], perr_gauss[1]))
-print("sigma = %0.2f (+/-) %0.2f" % (popt_gauss[2], perr_gauss[2]))
+print("I0G = %0.2f (+/-) %0.2f" % (popt[0], perr[0]))
+print("HWHM = %0.2f (+/-) %0.2f" % (popt[1], perr[1]))
+print("Center G = %0.2f (+/-) %0.2f" % (popt[2], perr[2]))
+print("q = %0.2f (+/-) %0.2f" % (popt[3], perr[3]))
 
 
 fig = plt.figure(figsize=(4,3))
 gs = gridspec.GridSpec(1,1)
 ax1 = fig.add_subplot(gs[0])
 
-ax1.plot(x_array, y_array_gauss, "bo", markersize =1) # experimental data
-ax1.plot(x_array, _1gaussian(x_array, *popt_gauss), 'k-.')  # fit data, (1)
+ax1.plot(x, y, "bo", markersize =1) # experimental data
+ax1.plot(x, BWF(x, *popt), 'k-.')  # fit data, (1)
 
 # (1) here, the *popt_gauss passess all the arguments of popt_gauss to the
 #     function _1gaussian, instead of writing them all out explicitly.
 
+#-----------------------------------------------------------------------------
 
+# End process timer
+end_time = time.process_time()
+print("Script runtime: %.2f \bs" % (end_time - start_time))
+
+# last runtime = 0.08s
+
+
+#---------------------------------Script End----------------------------------
 
 
 

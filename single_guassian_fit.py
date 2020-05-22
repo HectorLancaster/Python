@@ -63,7 +63,8 @@ sigma1 = 40
 
 popt_gauss, pcov_gauss = scipy.optimize.curve_fit(_1gaussian, x_array, 
                                                   y_array_gauss,
-                                                  p0=[amp1, cen1, sigma1])
+                                                  p0=[amp1, cen1, sigma1],
+                                                  bounds = (0,np.inf))
 
 # this calculates the one standard deviation errors of the parameters
 perr_gauss = np.sqrt(np.diag(pcov_gauss))
@@ -84,7 +85,16 @@ ax1.plot(x_array, _1gaussian(x_array, *popt_gauss), 'k-.')  # fit data, (1)
 # (1) here, the *popt_gauss passess all the arguments of popt_gauss to the
 #     function _1gaussian, instead of writing them all out explicitly.
 
+#-----------------------------------------------------------------------------
 
+# End process timer
+end_time = time.process_time()
+print("Script runtime: %.2f \bs" % (end_time - start_time))
+
+# last runtime = 0.08s
+
+
+#---------------------------------Script End----------------------------------
 
 
 

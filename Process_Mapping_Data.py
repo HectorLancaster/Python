@@ -24,6 +24,7 @@ threshold = 6
 import numpy as np
 import time
 import glob
+import copy
 
 
 #--------------------------------Import Data----------------------------------
@@ -39,6 +40,7 @@ filenames = sorted(glob.glob("C:\\Users\\Hector\\Desktop\\Data\\Map_Data\\*.txt"
 material = list()
 for i in range(len(filenames)):
     material.append(filenames[i][38:-8]) # Corresponds to position of name
+
 
 # This numpy method loads the text in as an array   
 raw_data = dict()
@@ -99,7 +101,7 @@ def fixer(f, z_bool, ma=5):
 
 #---clean data---
 
-clean_data = sliced_data.copy()
+clean_data = copy.deepcopy(sliced_data) # need deepcopy otherwise overwrites
 for i in material:
     xmin = int(min(raw_data[i][:,0]))
     xmax = int(max(raw_data[i][:,0]) + xstep)
@@ -123,16 +125,16 @@ for i in material:
 
 #----------------------------G-Peak Normalisation-----------------------------
 
-norm_data = clean_data.copy()
+norm_data = copy.deepcopy(clean_data)
 for i in material:
     xmin = int(min(raw_data[i][:,0]))
     xmax = int(max(raw_data[i][:,0]) + xstep)
     ymin = int(min(raw_data[i][:,1]))
     ymax = int(max(raw_data[i][:,1]) + ystep)
-    flength = (clean_data[i][(xmin,ymin)][:,3]).shape[0]
+    flength = (norm_data[i][(xmin,ymin)][:,3]).shape[0]
     for x in range(xmin, xmax, xstep):
         for y in range(ymin, ymax, ystep):
-            f = clean_data[i][(x,y)][:,3] # intensity data column
+            f = norm_data[i][(x,y)][:,3] # intensity data column
             max_g = max(f[:flength//2]) # max in top half of column
             f_norm = f/max_g # normalise to g_peak w/ value = 1
             norm_data[i][(x,y)][:,3] = f_norm # replace intensity data
@@ -144,7 +146,7 @@ for i in material:
 end_time = time.process_time()
 print("Script runtime: %.2f \bs" % (end_time - start_time))
 
-# last runtime = 9.48s
+# last runtime = 6.5s
 
 
 #---------------------------------Script End----------------------------------

@@ -15,7 +15,7 @@
 inter = "none"
 # Enter the grid size of the figure, here it is a one by three.
 rows = 1
-cols = 3
+cols = len(material)
 # Enter the map coordinates for the scalebar start and end
 # Here we have a 21,21 array corresponding to 100x100 microns, the gap between
 # two points is thus 4 microns, so by setting the gap to span 5 points, this 

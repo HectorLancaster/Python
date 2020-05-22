@@ -43,7 +43,7 @@ for i in material:
 
 #-----data spread-----    
 for i in material: 
-    plt.figure()
+    plt.figure(figsize=(7,5))
     xs = all_data[i][:,2]
     ys = all_data[i][:,3]
     plt.plot(xs, ys, ".", markersize = 1, color = "silver")
@@ -59,11 +59,12 @@ for i in material:
     plt.ylabel("Intensity (arb. units)")
     plt.legend(loc="upper right", fontsize="small", markerfirst=True,
            edgecolor="k", fancybox=False)
+    # fig.tight_layout() will fit everything nicely
     plt.savefig("C:\\Users\\Hector\\Desktop\\Data\\Figures\\" + i + " spread.pdf")
 
 
 #-----all averages-----
-plt.figure()
+fig = plt.figure(figsize=(7,5))
 counter = 0
 for i in material:
     #-----------------
@@ -108,4 +109,4 @@ end_time = time.process_time()
 print("\nScript runtime: %.2f \bs" % (end_time - start_time))
 
 # last runtime = 3.36s
-# w/ savefig = 23.33s
+# w/ savefig = 18.13s

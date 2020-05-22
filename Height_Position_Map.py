@@ -3,19 +3,14 @@
 # Creates a combined plot containing all map g peak postition wrt their xy 
 # coordinates for each material.
 
-# To do:
-#       add scale bar of 20 microns
-#       work out how to scale the RHS plot to be equal to the others
-#       work out how to scale teh size of the colorbar
-
 
 #--------------------------------user inputs----------------------------------
 
 # Interpolation: choose either "lanczos" or "none"
-inter = "none"
+inter = "lanczos"
 # Enter the grid size of the figure, here it is a one by three.
 rows = 1
-cols = 3
+cols = len(material)
 # Enter the map coordinates for the scalebar start and end
 # Here we have a 21,21 array corresponding to 100x100 microns, the gap between
 # two points is thus 4 microns, so by setting the gap to span 5 points, this 
@@ -77,7 +72,7 @@ for ax in grid: # for each axis in the image grid
                 xy=(end), xycoords="data", # arrow end point
                 xytext =(start), textcoords="data", # arrow start point
                 arrowprops=dict(arrowstyle="-", # arrow style = line 
-                                linewidth=2))
+                                linewidth=2, color = "black"))
         
 ax.cax.colorbar(im) # axes into which the colorbar is drawn, "im"
                     # links the colorbar to the last image in the above loop
@@ -93,6 +88,6 @@ plt.savefig("C:\\Users\\Hector\\Desktop\\Data\\Figures\\height position map.pdf"
 end_time = time.process_time()
 print("\nScript runtime: %.2f \bs" % (end_time - start_time))
 
-# last runtime = 0.33s
+# last runtime = 0.31s
 
 #---------------------------------script end----------------------------------
