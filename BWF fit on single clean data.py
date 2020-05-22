@@ -56,29 +56,32 @@ for i in material: # for each material
     xmin = int(min(raw_data[i][:,0]))
     ymin = int(min(raw_data[i][:,1]))
     #----------------
-    x = clean_data[i][0,-100][:,2] # define the spectral range
-    y = clean_data[i][0,-100][:,3] # use the map average as the y coords
+    x = clean_data[i][75,-5][:,2] # define the spectral range
+    y = clean_data[i][75,-5][:,3] # use the map average as the y coords
+    
+    x = np.array([np.float_(x[i]) for i in range(len(x))])
+    y = np.array([np.float_(y[i]) for i in range(len(y))])
 
     
     #-----------------------------initial guesses-----------------------------    
 
     #--Lorentzian D-peak---
     I0D = max(y[288:576]) # magnitude of the D peak
-    cenD = x[np.where(y==I0D)] # central frequency of D peak
+    cenD = x[np.where(y==I0D)][0] # central frequency of D peak
     gammaD = 50 # half width at half maximum (HWHM)
     
     #--BWF G-peak---
     I0G = max(y[:288]) # magnitude of the G peak
     gammaG = 30 # half width at half maximum (HWHM)
-    cenG = x[np.where(y==I0G)] # central frequency of G peak
+    cenG = x[np.where(y==I0G)][0] # central frequency of G peak
     q = -5 # where 1/q is the Fano parameter
 
     background = min(y)
     
-    pbounds = ((-np.inf,1200,-np.inf,-np.inf,-np.inf,1500,-np.inf,-np.inf),
-               (np.inf,1500,np.inf,np.inf,np.inf,1700,np.inf,np.inf))
+    #pbounds = ((-np.inf,1200,-np.inf,-np.inf,-np.inf,1500,-np.inf,-np.inf),
+               #(np.inf,1500,np.inf,np.inf,np.inf,1700,np.inf,np.inf))
     
-                
+
     #-------------------------------find voigt fit----------------------------   
     
     # The below is taken from the documentation on scipy.org:
@@ -101,14 +104,12 @@ for i in material: # for each material
                                                             p0=[I0D, cenD,
                                                                 gammaD, I0G,
                                                                 gammaG, cenG,
-                                                                q, background],
-                                                            method='trf',
-                                                            bounds=pbounds)
+                                                                q, background])
     
     # this calculates the one standard deviation errors of the parameters
     # since var = sigma^2
     perr_LorBWF = np.sqrt(np.diag(pcov_LorBWF))
-
+    
     
     # seperate parameters for each peak
     pars_1 = popt_LorBWF[[0,1,2,-1]]

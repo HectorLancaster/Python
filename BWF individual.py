@@ -4,14 +4,11 @@
 # peak. 
 
 # To do:
-#       1) Include baseline as variable (see Chris' code)
+#       1) Could insert a column with reduced chi2 for each spectrum
 
 
 #--------------------------------user inputs----------------------------------
 
-# Step size in data in x (column 1) and y (column 2):
-xstep = 5
-ystep = 5
 
 #------------------------------import modules---------------------------------
 
@@ -50,12 +47,16 @@ def LorBWF(x, I0D, cenD, gammaD, I0G, gammaG, cenG, q, background):
 
 #--------------------------get & print fitting data---------------------------
 
+p0 = ['I0D','cenD','gammaD','I0G', 'gammaG', 'cenG', 'q', 'background']
+
 for i in material: # for each material
+    #size = int(np.sqrt(len(clean_data[i]))) # note: only valid for square maps
+    #fit_data = pd.DataFrame(data = np.zeros((size,size))) # initialise dataframe
+    #fit_data = pd.DataFrame()
     xmin = int(min(raw_data[i][:,0]))
     xmax = int(max(raw_data[i][:,0]) + xstep)
     ymin = int(min(raw_data[i][:,1]))
     ymax = int(max(raw_data[i][:,1]) + ystep)
-    spectra = dict()
     for x in range(xmin, xmax, xstep):
         for y in range(ymin, ymax, ystep):
             #----standard----
@@ -67,21 +68,22 @@ for i in material: # for each material
             
             #--------------------------initial guesses----------------------------    
         
+
             #--Lorentzian D-peak---
             I0D = max(ys[288:576]) # magnitude of the D peak
-            cenD = xs[np.where(ys==I0D)] # central frequency of D peak
+            cenD = xs[np.where(ys==I0D)][0] # central frequency of D peak
             gammaD = 50 # half width at half maximum (HWHM)
             
             #--BWF G-peak---
             I0G = max(ys[:288]) # magnitude of the G peak
-            gammaG = 30 # half width at half maximum (HWHM)
-            cenG = xs[np.where(ys==I0G)] # central frequency of G peak
-            q = -5 # where 1/q is the Fano parameter
+            gammaG = 35 # half width at half maximum (HWHM)
+            cenG = xs[np.where(ys==I0G)][0] # central frequency of G peak
+            q = -4.5 # where 1/q is the Fano parameter
         
             background = min(ys)
-                      
-            #pbounds = ((-np.inf,1200,-np.inf,-np.inf,-np.inf,1500,-np.inf,-np.inf),
-               #(np.inf,1500,np.inf,np.inf,np.inf,1700,np.inf,np.inf))
+            
+            pbounds = ((-np.inf,1200,-np.inf,-np.inf,-np.inf,1500,-20,-np.inf),
+                       (np.inf,1500,np.inf,np.inf,np.inf,1700,20,np.inf))
     
     
             #--------------------------find voigt fit-----------------------------   
@@ -100,29 +102,20 @@ for i in material: # for each material
             #   pcov: the estimated covarience of popt. The diagonals provide the 
             #         variance of the parameter estimate.
         
+
             popt_LorBWF, pcov_LorBWF = scipy.optimize.curve_fit(LorBWF,
-                                                                    x,
-                                                                    y,
+                                                                    xs,
+                                                                    ys,
                                                                     p0=[I0D, cenD,
                                                                         gammaD, I0G,
                                                                         gammaG, cenG,
                                                                         q, background],
-                                                                    method='trf')
+                                                                    method='dogbox',
+                                                                    bounds=pbounds)
             
             # this calculates the one standard deviation errors of the parameters
             # since var = sigma^2
             # perr_LorBWF = np.sqrt(np.diag(pcov_LorBWF))
-            p0 = ['I0D','cenD','gammaD','I0G', 'gammaG', 'cenG', 'q', 'background']            
-            parameters = dict()
-            for j in range(len(p0)):
-                parameters[p0[j]] = popt_LorBWF[j]
-                
-            size = int(np.sqrt(len(clean_data[i]))) # note: only valid for square maps
-            fit_data = pd.DataFrame(data = np.zeros((size,size))) # initialise array
-            xcoord = x/xstep
-            ycoord = (y-ystep)//ystep
-            fit_data[xcoord][ycoord] = parameters
-            
             
             # seperate parameters for each peak
             pars_1 = popt_LorBWF[[0,1,2,-1]]
@@ -131,14 +124,27 @@ for i in material: # for each material
             # define individual peaks based on individual parameters
             Lor_peak = Lorentzian(xs, *pars_1)
             BWF_peak = BWF(xs, *pars_2)
+            
+            
+            #--------------------------store paramaters-----------------------
+            
+                        
+            parameters = dict() # initialise dictionary
+            for j in range(len(p0)):
+                parameters[p0[j]] = popt_LorBWF[j] # match parameters to dict
+                
+            if x == xmin and y == ymin:
+                fit_data = pd.DataFrame.from_dict(parameters, orient='index', columns=[(x,y)])
+            else:
+                fit_data[x,y] = pd.DataFrame.from_dict(parameters, orient='index') # populate dataframe
                           
             
-            #----------------------------residuals--------------------------------
+            #----------------------------residuals----------------------------
             
             # calculate the residuals (difference between fit and data points)
             residual = y - (LorBWF(xs, *popt_LorBWF))
         
-        
+fit_data.transpose()
     
 #-----------------------------------------------------------------------------
 
@@ -146,7 +152,7 @@ for i in material: # for each material
 end_time = time.process_time()
 print("\nScript runtime: %.2f \bs" % (end_time - start_time))
 
-# last runtime = 1.03s
+# last runtime = 426s
 
 
 #---------------------------------Script End----------------------------------              
